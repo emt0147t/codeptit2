@@ -70,27 +70,36 @@ import sys
 Do not include any extra text. Make sure the codes are clean and handle large edge cases based on problem limits.
 """
 
-    model = genai.GenerativeModel("gemini-1.5-flash")
-    
-    try:
-        response = model.generate_content(prompt)
-        text = response.text
-        
-        # Robust Regex Parsing
-        # Match ```python ... ``` or just ``` ... ```
-        pattern = r"```(?:python)?\n?(.*?)```"
-        blocks = re.findall(pattern, text, re.DOTALL)
-        
-        if len(blocks) < 2:
-            return None, None, "LLM không trả về đủ 2 block code Python hợp lệ."
+    import time
+    max_retries = 3
+    retry_delay = 5  # Start with 5 seconds
+
+    for attempt in range(max_retries):
+        try:
+            model = genai.GenerativeModel("gemini-1.5-flash")
+            response = model.generate_content(prompt)
+            text = response.text
             
-        gen_code = blocks[0].strip()
-        sol_code = blocks[1].strip()
-        
-        return gen_code, sol_code, ""
-    except Exception as e:
-        print(f"Failed to generate scripts via LLM: {e}")
-        return None, None, f"Lỗi gọi Gemini API: {str(e)}"
+            # Robust Regex Parsing
+            # Match ```python ... ``` or just ``` ... ```
+            pattern = r"```(?:python)?\n?(.*?)```"
+            blocks = re.findall(pattern, text, re.DOTALL)
+            
+            if len(blocks) < 2:
+                return None, None, "LLM không trả về đủ 2 block code Python hợp lệ."
+                
+            gen_code = blocks[0].strip()
+            sol_code = blocks[1].strip()
+            
+            return gen_code, sol_code, ""
+        except Exception as e:
+            if "429" in str(e) and attempt < max_retries - 1:
+                print(f"Rate limited (429). Retrying in {retry_delay} seconds... (Attempt {attempt + 1}/{max_retries})")
+                time.sleep(retry_delay)
+                retry_delay *= 2  # Exponential backoff
+                continue
+            print(f"Failed to generate scripts via LLM: {e}")
+            return None, None, f"Lỗi gọi Gemini API (429/Quota): {str(e)}"
 
 def auto_generate_testcases(problem_code: str, num_tests: int = 10):
     db = SessionLocal()
