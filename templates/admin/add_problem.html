@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Thêm bài tập - Admin{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <h1 class="text-2xl font-bold text-gray-800 mb-6">Thêm bài tập mới</h1>
+
+    {% if error %}
+    <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="POST" action="/admin/problems/add" class="bg-white rounded-lg shadow-sm border p-6">
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Mã bài *</label>
+                <input type="text" name="code" required placeholder="VD: CPP0101"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#c82333] outline-none font-mono">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Tên bài *</label>
+                <input type="text" name="title" required placeholder="VD: Tính tổng 1 đến N"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#c82333] outline-none">
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Mô tả bài toán *</label>
+            <textarea name="description" rows="6" required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#c82333] outline-none"
+                placeholder="Cho số nguyên dương N..."></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Mô tả Input</label>
+                <textarea name="input_description" rows="3"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#c82333] outline-none"
+                    placeholder="Dòng đầu ghi số bộ test..."></textarea>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Mô tả Output</label>
+                <textarea name="output_description" rows="3"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#c82333] outline-none"
+                    placeholder="Với mỗi test, ghi kết quả trên một dòng"></textarea>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Sample Input</label>
+                <textarea name="sample_input" rows="3"
+                    class="code-editor w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#c82333] outline-none text-sm"
+                    placeholder="2&#10;10&#10;20"></textarea>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Sample Output</label>
+                <textarea name="sample_output" rows="3"
+                    class="code-editor w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#c82333] outline-none text-sm"
+                    placeholder="55&#10;210"></textarea>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-4 mb-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Độ khó</label>
+                <select name="difficulty"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#c82333] outline-none">
+                    <option value="Easy">Easy</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Hard">Hard</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Time Limit (s)</label>
+                <input type="number" name="time_limit" value="1.0" step="0.5" min="0.5" max="10"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#c82333] outline-none">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Memory Limit (MB)</label>
+                <input type="number" name="memory_limit" value="256" min="64" max="1024"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#c82333] outline-none">
+            </div>
+        </div>
+
+        <button type="submit"
+            class="bg-[#c82333] hover:bg-[#a71d2a] text-white font-medium px-8 py-2.5 rounded-lg transition">
+            Thêm bài tập
+        </button>
+    </form>
+</div>
+{% endblock %}

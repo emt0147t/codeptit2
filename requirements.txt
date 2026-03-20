@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+bcrypt
+python-multipart
+jinja2
+aiofiles
+itsdangerous
+google-generativeai
+python-dotenv
+psycopg2-binary==2.9.11

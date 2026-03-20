@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+{% block title %}Kết quả #{{ submission.id }} - CodePTITclone{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto animate-fade-in">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-5">
+            <h1 class="text-lg font-bold text-gray-800">
+                Kết quả nộp bài <span class="text-brand-600">#{{ submission.id }}</span>
+            </h1>
+            <div class="flex items-center gap-3">
+                <a href="/category/{{ problem.category }}"
+                    class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Về danh sách bài
+                </a>
+                <a href="/problem/{{ problem.code }}"
+                    class="text-sm border border-brand-200 bg-brand-50 text-brand-600 px-3 py-1.5 rounded-lg hover:bg-brand-100 hover:border-brand-300 font-medium transition flex items-center gap-1.5 shadow-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                    </svg>
+                    {{ problem.code }} - {{ problem.title }}
+                </a>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+            <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                <div class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Trạng thái</div>
+                <div data-field="status" class="text-sm font-bold mt-1
+                    {% if submission.status == 'Accepted' %}status-accepted
+                    {% elif submission.status == 'Wrong Answer' %}status-wrong
+                    {% elif submission.status == 'Time Limit Exceeded' %}status-tle
+                    {% elif submission.status == 'Compilation Error' %}status-ce
+                    {% elif submission.status == 'Runtime Error' %}status-re
+                    {% elif submission.status == 'Memory Limit Exceeded' %}status-mle
+                    {% else %}status-pending{% endif %}
+                ">{{ submission.status }}</div>
+            </div>
+            <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                <div class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Điểm</div>
+                <div data-field="score" class="text-sm font-bold mt-1 text-gray-800">{{ "%.0f"|format(submission.score)
+                    }}/100</div>
+            </div>
+            <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                <div class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Thời gian</div>
+                <div data-field="time" class="text-sm font-bold mt-1 text-gray-800">{{ "%.0f"|format(submission.time_ms)
+                    }} ms</div>
+            </div>
+            <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                <div class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Ngôn ngữ</div>
+                <div class="text-sm font-bold mt-1 text-gray-800 font-mono">{{ submission.language }}</div>
+            </div>
+            <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                <div class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Thời điểm</div>
+                <div class="text-sm font-bold mt-1 text-gray-800">{{ submission.created_at.strftime('%d/%m/%Y %H:%M') }}
+                </div>
+            </div>
+        </div>
+
+        {% if submission.status == 'Pending' %}
+        <div id="pending-banner"
+            class="bg-amber-50 border border-amber-200 text-amber-700 px-4 py-3 rounded-xl mb-5 text-sm flex items-center gap-2">
+            <svg class="animate-spin w-4 h-4 text-amber-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Bài đang được chấm...
+        </div>
+        {% endif %}
+
+        <!-- Compile Error -->
+        <div id="compile-error-section" class="mb-6 {% if not submission.compile_error %}hidden{% endif %}">
+            <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Lỗi biên dịch</h3>
+            <pre
+                class="bg-red-50 text-red-600 p-4 rounded-xl text-xs overflow-x-auto border border-red-100 font-mono">{{ submission.compile_error or '' }}</pre>
+        </div>
+
+        <!-- Test Results -->
+        <div id="results-section" class="{% if not results %}hidden{% endif %}">
+            <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Chi tiết từng test</h3>
+            <div class="bg-white border border-gray-100 rounded-xl overflow-hidden">
+                <table class="min-w-full">
+                    <thead>
+                        <tr class="border-b border-gray-100">
+                            <th
+                                class="px-4 py-2.5 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+                                Test</th>
+                            <th
+                                class="px-4 py-2.5 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+                                Kết quả</th>
+                            <th
+                                class="px-4 py-2.5 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+                                Thời gian</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-tbody">
+                        {% for r in results %}
+                        <tr class="table-row-hover border-b border-gray-50">
+                            <td class="px-4 py-2.5 text-sm text-gray-600 font-medium">Test {{ loop.index }}</td>
+                            <td class="px-4 py-2.5 text-sm font-semibold
+                                {% if r.status == 'Accepted' %}status-accepted
+                                {% elif r.status == 'Wrong Answer' %}status-wrong
+                                {% elif r.status == 'Time Limit Exceeded' %}status-tle
+                                {% elif r.status == 'Runtime Error' %}status-re
+                                {% else %}status-pending{% endif %}
+                            ">{{ r.status }}</td>
+                            <td class="px-4 py-2.5 text-xs text-gray-500 font-mono">{{ "%.0f"|format(r.time_ms) }} ms
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Source Code -->
+        <div class="mt-6">
+            <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Mã nguồn</h3>
+            <pre
+                class="rounded-xl overflow-hidden"><code class="language-{{ submission.language }} text-sm">{{ submission.source_code }}</code></pre>
+        </div>
+    </div>
+</div>
+
+{% if submission.status == 'Pending' %}
+{% block scripts %}
+<script>
+    (function () {
+        const sid = {{ submission.id }};
+    let polling = true;
+    let interval = 1500;
+
+    async function checkStatus() {
+        if (!polling) return;
+        try {
+            const res = await fetch('/api/submission/' + sid + '/status');
+            if (!res.ok) return;
+            const data = await res.json();
+
+            const statusEl = document.querySelector('[data-field="status"]');
+            if (statusEl) {
+                statusEl.textContent = data.status;
+                statusEl.className = 'text-sm font-bold mt-1 ' + getStatusClass(data.status);
+            }
+
+            const scoreEl = document.querySelector('[data-field="score"]');
+            if (scoreEl) scoreEl.textContent = data.score + '/100';
+
+            const timeEl = document.querySelector('[data-field="time"]');
+            if (timeEl) timeEl.textContent = data.time_ms + ' ms';
+
+            const banner = document.getElementById('pending-banner');
+
+            if (data.done) {
+                polling = false;
+                if (banner) banner.remove();
+
+                if (data.compile_error) {
+                    const ceDiv = document.getElementById('compile-error-section');
+                    if (ceDiv) {
+                        ceDiv.classList.remove('hidden');
+                        ceDiv.querySelector('pre').textContent = data.compile_error;
+                    }
+                }
+
+                if (data.results && data.results.length > 0) {
+                    const tbody = document.getElementById('results-tbody');
+                    const section = document.getElementById('results-section');
+                    if (tbody && section) {
+                        section.classList.remove('hidden');
+                        tbody.innerHTML = '';
+                        data.results.forEach(function (r) {
+                            const tr = document.createElement('tr');
+                            tr.className = 'table-row-hover border-b border-gray-50';
+                            tr.innerHTML = '<td class="px-4 py-2.5 text-sm text-gray-600 font-medium">Test ' + r.index + '</td>' +
+                                '<td class="px-4 py-2.5 text-sm font-semibold ' + getStatusClass(r.status) + '">' + r.status + '</td>' +
+                                '<td class="px-4 py-2.5 text-xs text-gray-500 font-mono">' + r.time_ms + ' ms</td>';
+                            tbody.appendChild(tr);
+                        });
+                    }
+                }
+            } else {
+                setTimeout(checkStatus, interval);
+                interval = Math.min(interval + 500, 5000);
+            }
+        } catch (e) {
+            setTimeout(checkStatus, 3000);
+        }
+    }
+
+    function getStatusClass(status) {
+        switch (status) {
+            case 'Accepted': return 'status-accepted';
+            case 'Wrong Answer': return 'status-wrong';
+            case 'Time Limit Exceeded': return 'status-tle';
+            case 'Compilation Error': return 'status-ce';
+            case 'Runtime Error': return 'status-re';
+            case 'Memory Limit Exceeded': return 'status-mle';
+            default: return 'status-pending';
+        }
+    }
+
+    setTimeout(checkStatus, interval);
+}) ();
+</script>
+{% endblock %}
+{% endif %}
+{% endblock %}

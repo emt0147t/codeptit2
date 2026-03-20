@@ -1,0 +1,39 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Temp/analysis files
+analysis_output.txt
+check_coverage_output.txt
+cov.txt
+cov_all.txt
+debug_output.txt
+dryrun*.txt
+gen*.txt
+import_test.txt
+solvable.txt
+um_status.txt
+unmatched_*.txt
+
+# Tunnel
+tunnel.py
+
+# Code_PTIT source (too large for deploy)
+Code_PTIT-main/
+
+# Testcase files (already in DB)
+testcases/
+
+# Environment Variables & Database
+.env
+online_judge.db

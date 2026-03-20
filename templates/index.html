@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}CodePTITclone - Trang chủ{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div
+    class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-brand-600 via-brand-700 to-gray-900 text-white py-16 px-8 mb-10 shadow-2xl">
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute top-10 left-10 w-72 h-72 bg-white rounded-full blur-3xl"></div>
+        <div class="absolute bottom-10 right-10 w-96 h-96 bg-brand-400 rounded-full blur-3xl"></div>
+    </div>
+    <div class="relative text-center">
+        <div class="flex flex-row items-center justify-center gap-3 mb-3 animate-fade-in">
+            <img src="/static/cr7-logo-svg-vector.svg" alt="CodePTITclone Logo" class="h-16 w-auto drop-shadow-2xl">
+            <h1 class="text-5xl font-extrabold tracking-tight flex items-center">
+                <span class="text-white">CODE</span>
+                <span class="text-gray-200">PTIT</span>
+                <span class="text-brand-200 italic font-medium text-3xl ml-1">clone</span>
+            </h1>
+        </div>
+        <p class="text-lg text-brand-100 max-w-xl mx-auto mb-8 animate-fade-in" style="animation-delay: 0.1s">Luyện tập
+            lập trình, nâng cao kỹ năng giải thuật cùng cộng đồng PTIT</p>
+        <div class="flex justify-center gap-4 animate-fade-in" style="animation-delay: 0.2s">
+            <a href="/problems"
+                class="bg-white text-brand-700 hover:bg-brand-50 px-8 py-3 rounded-xl text-sm font-bold transition shadow-lg hover:shadow-xl">
+                Bắt đầu luyện tập →
+            </a>
+            <a href="/register"
+                class="border-2 border-white/30 hover:border-white/60 text-white px-8 py-3 rounded-xl text-sm font-semibold transition backdrop-blur-sm">
+                Đăng ký tài khoản
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Stats -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-12">
+    <div class="bg-white rounded-xl border border-gray-100 p-6 text-center card-hover shadow-sm">
+        <div class="text-4xl font-extrabold text-brand-600 animate-count-up">{{ total_problems }}</div>
+        <div class="text-sm text-gray-500 mt-1 font-medium">Bài tập</div>
+    </div>
+    <div class="bg-white rounded-xl border border-gray-100 p-6 text-center card-hover shadow-sm"
+        style="animation-delay: 0.1s">
+        <div class="text-4xl font-extrabold text-brand-600 animate-count-up">{{ total_submissions }}</div>
+        <div class="text-sm text-gray-500 mt-1 font-medium">Lần nộp bài</div>
+    </div>
+    <div class="bg-white rounded-xl border border-gray-100 p-6 text-center card-hover shadow-sm"
+        style="animation-delay: 0.2s">
+        <div class="text-4xl font-extrabold text-brand-600 animate-count-up">{{ total_users }}</div>
+        <div class="text-sm text-gray-500 mt-1 font-medium">Thành viên</div>
+    </div>
+</div>
+
+<!-- Category Cards -->
+<div class="mb-8">
+    <h2 class="text-xl font-bold text-gray-800 mb-5">📚 Danh mục môn học</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {% for cat in categories %}
+        <a href="/category/{{ cat.slug }}"
+            class="group block bg-white rounded-xl border border-gray-100 overflow-hidden card-hover shadow-sm">
+            <div class="p-5">
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="flex-shrink-0">{{ cat.icon | safe }}</span>
+                    <div>
+                        <h3 class="text-base font-bold text-gray-800 group-hover:text-brand-600 transition">{{ cat.name
+                            }}</h3>
+                        <span class="text-xs text-gray-400 font-mono">{{ cat.short }}</span>
+                    </div>
+                </div>
+                <p class="text-gray-500 text-xs mb-3 line-clamp-2">{{ cat.description }}</p>
+                <div class="flex items-center justify-between">
+                    <span class="text-brand-600 font-extrabold text-xl">{{ cat.count }}</span>
+                    <span class="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-full">bài tập</span>
+                </div>
+                <div class="mt-3 w-full bg-gray-100 rounded-full h-1">
+                    <div class="bg-brand-500 h-1 rounded-full transition-all duration-500"
+                        style="width: {{ (cat.count / (total_problems if total_problems > 0 else 1) * 100) | round(1) }}%">
+                    </div>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

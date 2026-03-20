@@ -1,0 +1,22 @@
+/* Additional custom styles */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+.code-editor {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    tab-size: 4;
+    -moz-tab-size: 4;
+    line-height: 1.5;
+}
+
+/* Allow tab key in textarea */
+textarea.code-editor:focus {
+    outline: none;
+}

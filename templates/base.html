@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CodePTITclone{% endblock %}</title>
+    <link rel="icon" type="image/svg+xml" href="/static/cr7-logo-svg-vector.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+    <!-- Markdown & Math Support -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.0/github-markdown-light.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Consolas', 'monospace'],
+                    },
+                    colors: {
+                        brand: { 50: '#fef2f2', 100: '#fee2e2', 200: '#fecaca', 300: '#fca5a5', 400: '#f87171', 500: '#ef4444', 600: '#c82333', 700: '#a71d2a', 800: '#7f1d1d', 900: '#450a0a' },
+                    },
+                    keyframes: {
+                        'fade-in': { '0%': { opacity: '0', transform: 'translateY(8px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        'slide-down': { '0%': { opacity: '0', transform: 'translateY(-8px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        'count-up': { '0%': { opacity: '0', transform: 'scale(0.5)' }, '100%': { opacity: '1', transform: 'scale(1)' } },
+                    },
+                    animation: {
+                        'fade-in': 'fade-in 0.4s ease-out forwards',
+                        'slide-down': 'slide-down 0.3s ease-out forwards',
+                        'count-up': 'count-up 0.5s ease-out forwards',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+
+        /* Status Colors */
+        .status-accepted {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .status-wrong {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        .status-tle {
+            color: #f59e0b;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            color: #6b7280;
+            font-weight: 600;
+        }
+
+        .status-ce {
+            color: #8b5cf6;
+            font-weight: 600;
+        }
+
+        .status-re {
+            color: #ec4899;
+            font-weight: 600;
+        }
+
+        .status-mle {
+            color: #f97316;
+            font-weight: 600;
+        }
+
+        /* Difficulty Badges */
+        .diff-easy {
+            color: #10b981;
+        }
+
+        .diff-medium {
+            color: #f59e0b;
+        }
+
+        .diff-hard {
+            color: #ef4444;
+        }
+
+        .code-editor {
+            font-family: 'JetBrains Mono', monospace;
+            tab-size: 4;
+        }
+
+        .markdown-body {
+            background-color: transparent;
+            font-family: inherit;
+            color: #374151;
+            font-size: 15px;
+        }
+
+        .markdown-body pre {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            border-radius: 8px;
+        }
+
+        .markdown-body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 14px;
+        }
+
+        .markdown-body th {
+            background-color: #f9fafb;
+            font-weight: 600;
+            text-align: left;
+            padding: 10px 14px;
+            border: 1px solid #e5e7eb;
+            color: #374151;
+        }
+
+        .markdown-body td {
+            padding: 10px 14px;
+            border: 1px solid #e5e7eb;
+            color: #4b5563;
+        }
+
+        .markdown-body tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+
+        .markdown-body strong {
+            font-weight: 600;
+            color: #111827;
+        }
+
+        /* Navbar Dropdown Animation */
+        .dropdown-menu {
+            opacity: 0;
+            transform: translateY(-4px) scale(0.97);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            pointer-events: none;
+        }
+
+        .dropdown-menu.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        /* Smooth hover transitions */
+        .nav-link {
+            position: relative;
+            transition: color 0.2s;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #c82333;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Glass effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        /* Table row hover */
+        .table-row-hover {
+            transition: all 0.15s ease;
+        }
+
+        .table-row-hover:hover {
+            background: linear-gradient(90deg, #fef2f2, #fff);
+            transform: translateX(2px);
+        }
+
+        /* Card hover */
+        .card-hover {
+            transition: all 0.25s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+        }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+
+<body class="h-full bg-gradient-to-br from-gray-50 via-white to-gray-100 flex flex-col min-h-screen">
+    <!-- Navbar -->
+    <nav class="glass sticky top-0 z-50 border-b border-gray-200/60 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-14">
+                <div class="flex items-center space-x-6">
+                    <a href="/" class="flex items-center gap-1 group">
+                        <img src="/static/cr7-logo-svg-vector.svg" alt="CodePTITclone Logo" class="h-8 w-auto group-hover:scale-105 transition-transform duration-300">
+                        <span class="text-xl font-extrabold text-brand-600 group-hover:text-brand-700 transition ml-1">Code</span>
+                        <span class="text-xl font-extrabold text-gray-800">PTIT</span>
+                        <span class="text-sm font-medium italic text-gray-400">clone</span>
+                    </a>
+
+                    <a href="/problems" class="nav-link text-sm font-medium text-gray-600 hover:text-brand-600">Bài
+                        tập</a>
+
+                    <div class="relative" id="cat-dropdown">
+                        <button
+                            class="nav-link text-sm font-medium text-gray-600 hover:text-brand-600 flex items-center gap-1 focus:outline-none"
+                            id="cat-btn">
+                            Môn học
+                            <svg class="w-3.5 h-3.5 transition-transform duration-200" id="cat-chevron" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div id="cat-menu"
+                            class="dropdown-menu absolute left-0 mt-3 w-72 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50">
+                            <div class="py-1">
+                                <a href="/category/ngon-ngu-lap-trinh-cpp" class="flex items-center gap-3 px-4 py-3 hover:bg-brand-50 transition-colors"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg><span class="text-sm font-medium text-gray-700">Ngôn ngữ lập trình C++</span></a>
+                                <a href="/category/tin-hoc-co-so-2" class="flex items-center gap-3 px-4 py-3 hover:bg-brand-50 transition-colors"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg><span class="text-sm font-medium text-gray-700">Tin học cơ sở 2</span></a>
+                                <a href="/category/cau-truc-du-lieu-giai-thuat" class="flex items-center gap-3 px-4 py-3 hover:bg-brand-50 transition-colors"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"/></svg><span class="text-sm font-medium text-gray-700">DSA - Giải thuật</span></a>
+                                <a href="/category/lap-trinh-huong-doi-tuong" class="flex items-center gap-3 px-4 py-3 hover:bg-brand-50 transition-colors"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v1a2 2 0 01-2 2H5a2 2 0 01-2-2v-1a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg><span class="text-sm font-medium text-gray-700">Lập trình hướng đối tượng</span></a>
+                                <a href="/category/lap-trinh-voi-python" class="flex items-center gap-3 px-4 py-3 hover:bg-brand-50 transition-colors"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><span class="text-sm font-medium text-gray-700">Lập trình với Python</span></a>
+                                <a href="/category/thuat-toan-nang-cao" class="flex items-center gap-3 px-4 py-3 hover:bg-brand-50 transition-colors"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg><span class="text-sm font-medium text-gray-700">Thuật toán nâng cao</span></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="/submissions" class="nav-link text-sm font-medium text-gray-600 hover:text-brand-600">Bài
+                        nộp</a>
+                    <a href="/ranking" class="nav-link text-sm font-medium text-gray-600 hover:text-brand-600">Xếp
+                        hạng</a>
+                </div>
+                <div class="flex items-center space-x-3">
+                    {% if user %}
+                    <span class="text-sm text-gray-500">Xin chào, <strong class="text-gray-800">{{ user.username
+                            }}</strong></span>
+                    {% if user.is_admin %}
+                    <a href="/problems"
+                        class="text-xs font-semibold text-gray-600 hover:text-brand-600 px-3 py-1.5 transition">
+                        Quản lý bài tập</a>
+                    <a href="/admin/problems/add"
+                        class="text-xs font-semibold bg-brand-50 text-brand-600 hover:bg-brand-100 px-3 py-1.5 rounded-lg transition">+
+                        Thêm bài</a>
+                    {% endif %}
+                    <a href="/my-submissions" class="text-sm text-gray-500 hover:text-brand-600 transition">Bài nộp</a>
+                    <a href="/logout"
+                        class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1.5 rounded-lg transition">Đăng
+                        xuất</a>
+                    {% else %}
+                    <a href="/login" class="text-sm font-medium text-brand-600 hover:text-brand-700 transition">Đăng
+                        nhập</a>
+                    <a href="/register"
+                        class="text-sm font-medium bg-brand-600 hover:bg-brand-700 text-white px-4 py-1.5 rounded-lg transition shadow-sm">Đăng
+                        ký</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="{% block main_class %}max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6{% endblock %} flex-1">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="flex items-center justify-center gap-1 mb-2">
+                <span class="text-brand-500 font-bold">Code</span><span class="text-white font-bold">PTIT</span><span
+                    class="italic text-gray-500 text-sm">clone</span>
+            </div>
+            <p class="text-xs text-gray-500">From emt0147 with love — © 2026</p>
+        </div>
+    </footer>
+
+    <script>hljs.highlightAll();</script>
+    <script>
+        // Dropdown logic with smooth animation
+        (function () {
+            const btn = document.getElementById('cat-btn');
+            const menu = document.getElementById('cat-menu');
+            const chevron = document.getElementById('cat-chevron');
+            if (!btn || !menu) return;
+
+            btn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                menu.classList.toggle('show');
+                if (chevron) chevron.style.transform = menu.classList.contains('show') ? 'rotate(180deg)' : '';
+            });
+
+            document.addEventListener('click', function (e) {
+                if (!document.getElementById('cat-dropdown').contains(e.target)) {
+                    menu.classList.remove('show');
+                    if (chevron) chevron.style.transform = '';
+                }
+            });
+        })();
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>
