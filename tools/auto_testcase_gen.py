@@ -70,7 +70,7 @@ import sys
 Do not include any extra text. Make sure the codes are clean and handle large edge cases based on problem limits.
 """
 
-    model = genai.GenerativeModel("models/gemini-1.5-flash")
+    model = genai.GenerativeModel("gemini-1.5-flash")
     
     try:
         response = model.generate_content(prompt)
